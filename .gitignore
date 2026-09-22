@@ -1,6 +1,5 @@
-# 원본 영상과 중간 산출물은 올리지 않는다 (최종 산출물은 scene.sog 하나만)
+# 원본 영상은 올리지 않는다. 배포 산출물은 scene.compressed.ply (뷰어에서 실제로 렌더링 확인된 형식).
+# scene.ply(원본, 36MB)는 로컬에만 둔다. scene.spz는 비교표용으로 남겨 함께 커밋.
 *.mp4
 scene.ply
-*.compressed.ply
-*.spz
 _qa_test.*

@@ -124,15 +124,21 @@ async function loadSplat(url, filename, sizeBytes) {
   );
 }
 
-// 페이지 로드시 기본 장면(scene.sog) 있으면 자동 로드
-fetch('./scene.sog', { method: 'HEAD' }).then((res) => {
-  if (res.ok) {
-    const size = Number(res.headers.get('content-length')) || null;
-    loadSplat('./scene.sog', 'scene.sog', size).catch((e) => setHud('scene.sog 로드 실패: ' + e));
-  } else {
-    setHud('scene.sog 가 없습니다. 파일을 끌어다 놓아 주세요.');
+// 페이지 로드시 기본 장면을 순서대로 찾아 자동 로드 (sog가 없으면 spz로 대체)
+async function loadDefaultScene() {
+  for (const name of ['scene.sog', 'scene.compressed.ply']) {
+    try {
+      const res = await fetch('./' + name, { method: 'HEAD' });
+      if (res.ok) {
+        const size = Number(res.headers.get('content-length')) || null;
+        await loadSplat('./' + name, name, size);
+        return;
+      }
+    } catch (e) { /* try next */ }
   }
-}).catch(() => setHud('파일을 끌어다 놓아 주세요.'));
+  setHud('기본 장면 파일이 없습니다. 파일을 끌어다 놓아 주세요.');
+}
+loadDefaultScene();
 
 // 드래그 앤 드롭
 window.addEventListener('dragover', (e) => {
