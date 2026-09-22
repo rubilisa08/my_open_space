@@ -4,7 +4,7 @@
 // npx로만 실행하므로 @playcanvas/splat-transform 을 따로 설치할 필요는 없다.
 
 import { execFileSync } from 'node:child_process';
-import { statSync } from 'node:fs';
+import { statSync, existsSync } from 'node:fs';
 import { basename } from 'node:path';
 
 const input = process.argv[2];
@@ -50,8 +50,9 @@ const targets = [
 const rows = [];
 
 for (const t of targets) {
-  let elapsedMs = 0;
-  if (!t.isSource) {
+  let elapsedMs = null;
+  const alreadyExists = !t.isSource && existsSync(t.file) && statSync(t.file).size > 0;
+  if (!t.isSource && !alreadyExists) {
     const start = Date.now();
     run(['-w', input, t.file]);
     elapsedMs = Date.now() - start;
@@ -67,7 +68,7 @@ for (const t of targets) {
     format: t.label,
     file: basename(t.file),
     sizeBytes: size,
-    seconds: t.isSource ? null : (elapsedMs / 1000).toFixed(2),
+    seconds: elapsedMs == null ? null : (elapsedMs / 1000).toFixed(2),
     count,
     bytesPerSplat: count ? (size / count).toFixed(2) : null,
   });
