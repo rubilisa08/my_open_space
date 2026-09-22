@@ -1,0 +1,6 @@
+# 원본 영상과 중간 산출물은 올리지 않는다 (최종 산출물은 scene.sog 하나만)
+*.mp4
+scene.ply
+*.compressed.ply
+*.spz
+_qa_test.*
